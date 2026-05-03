@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/defaultmapping.ts","./src/exportutils.ts","./src/fileutils.ts","./src/geometry.test.ts","./src/geometry.ts","./src/main.tsx","./src/storage.ts","./src/types.ts","./src/vite-env.d.ts"],"version":"5.9.3"}
