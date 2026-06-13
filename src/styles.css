@@ -9,10 +9,15 @@
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
 }
 
 button,
@@ -20,18 +25,25 @@ input {
   font: inherit;
 }
 
+/* ------------------------------------------------------------------ *
+ * Full-height shell: header (auto) + workspace (fills the viewport).
+ * Nothing on the page scrolls; the canvas always fits its pane.
+ * ------------------------------------------------------------------ */
 .app-shell {
   width: min(1480px, calc(100vw - 48px));
-  margin: 24px auto;
+  height: 100dvh;
+  margin: 0 auto;
+  padding: 16px 0;
   display: grid;
-  gap: 28px;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 16px;
 }
 
 .eyebrow {
-  margin: 0 0 8px;
+  margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: #7b7266;
 }
 
@@ -41,52 +53,60 @@ h2 {
 }
 
 h1 {
-  font-size: clamp(2rem, 3vw, 3rem);
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-  max-width: 12ch;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.lede {
-  color: #645d52;
-  line-height: 1.55;
-  margin: 10px 0 0;
-}
-
+/* ---- Slim top bar ---- */
 .topbar {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 24px;
-  align-items: end;
-  padding-bottom: 18px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(31, 28, 23, 0.12);
 }
 
-.topbar-copy {
-  max-width: 620px;
+.brand {
+  display: grid;
+  gap: 2px;
 }
 
-.topbar-badge-row {
+.topbar-right {
   display: flex;
+  gap: 24px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.topbar-actions .ghost-button {
+  padding: 7px 12px;
+  font-size: 0.86rem;
 }
 
 .topbar-meta {
   display: flex;
-  gap: 20px;
-  align-items: end;
+  gap: 28px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
 .meta-block {
   display: grid;
-  gap: 4px;
-  min-width: 180px;
+  gap: 2px;
+  min-width: 0;
 }
 
 .meta-label,
 .stat-label {
-  font-size: 0.76rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #7b7266;
@@ -94,69 +114,107 @@ h1 {
 
 .meta-value,
 .stat-value {
-  font-size: 0.98rem;
+  font-size: 0.9rem;
   color: #1f1c17;
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.3;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* ---- Two-column workspace, locked to the viewport height ---- */
 .workspace-grid {
   display: grid;
-  grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
-  gap: 32px;
-  align-items: start;
+  grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+  gap: 24px;
+  min-height: 0;
+  align-items: stretch;
 }
 
 .controls-column {
-  display: grid;
-  gap: 16px;
-}
-
-.controls-shell {
-  display: grid;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  padding-right: 8px;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
-.panel {
-  display: grid;
-  gap: 16px;
-  padding: 18px 0 22px;
-  border-bottom: 1px solid rgba(31, 28, 23, 0.1);
+/* ---- Step accordion ---- */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.panel:last-child {
-  border-bottom: none;
+.step {
+  border: 1px solid rgba(31, 28, 23, 0.12);
+  border-radius: 12px;
+  background: #faf7f1;
+  overflow: hidden;
 }
 
-.section-head {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 14px;
-  align-items: start;
+.step--active {
+  border-color: rgba(31, 28, 23, 0.24);
+  box-shadow: 0 1px 3px rgba(31, 28, 23, 0.06);
 }
 
-.compact-head {
+.step-header {
+  display: flex;
+  align-items: center;
   gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
 
-.section-step {
-  min-width: 32px;
-  height: 32px;
+.step-header:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.step-number {
+  min-width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
   background: #1f1c17;
   color: #f4efe8;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
 }
 
-.section-copy {
+.step--active .step-number {
+  background: #8a5a16;
+}
+
+.step-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.step-summary {
+  margin-left: auto;
+  color: #7b7266;
+  font-size: 0.84rem;
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step-body {
   display: grid;
-  gap: 4px;
+  gap: 14px;
+  padding: 0 14px 16px;
 }
 
 .control-title {
@@ -168,7 +226,7 @@ h1 {
 .control-grid label {
   display: grid;
   gap: 8px;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .file-field input {
@@ -189,17 +247,11 @@ h1 {
 .primary-button,
 .secondary-button {
   border-radius: 10px;
-  padding: 11px 14px;
+  padding: 10px 14px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
   font-weight: 600;
-}
-
-.ghost-button:hover,
-.primary-button:hover,
-.secondary-button:hover {
-  transform: none;
 }
 
 .ghost-button {
@@ -233,46 +285,99 @@ h1 {
 }
 
 .button-row > button {
-  flex: 1 1 180px;
+  flex: 1 1 150px;
 }
 
 .control-grid {
   display: grid;
-  gap: 14px;
-  padding-top: 4px;
+  gap: 12px;
 }
 
 .control-grid input[type="range"] {
   width: 100%;
 }
 
+.control-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.control-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #1f1c17;
+  font-weight: 600;
+}
+
+.control-number {
+  width: 64px;
+  padding: 4px 6px;
+  border: 1px solid rgba(31, 28, 23, 0.2);
+  border-radius: 7px;
+  background: #fffdf9;
+  color: #1f1c17;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.control-unit {
+  color: #7b7266;
+  font-size: 0.84rem;
+  min-width: 14px;
+}
+
+.snap-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: #2b2721;
+  cursor: pointer;
+}
+
+.snap-toggle input {
+  width: 16px;
+  height: 16px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stat-block {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f0ebe3;
+}
+
 .hint {
   margin: 0;
   color: #6b655d;
   line-height: 1.45;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
 }
 
-.label-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.label-chip {
-  padding: 7px 10px;
-  border-radius: 8px;
+.hint kbd {
+  font-family: inherit;
+  font-size: 0.78em;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid rgba(31, 28, 23, 0.18);
   background: #f0ebe3;
-  border: 1px solid rgba(31, 28, 23, 0.08);
-  color: #3c382f;
-  font-size: 0.9rem;
 }
 
 .status,
 .error {
-  padding: 12px 14px;
+  padding: 11px 14px;
   border-radius: 10px;
-  font-size: 0.94rem;
+  font-size: 0.9rem;
 }
 
 .status {
@@ -287,46 +392,35 @@ h1 {
 
 .message-stack {
   display: grid;
-  gap: 12px;
+  gap: 10px;
 }
 
+/* ---- Preview column ---- */
 .preview-column {
+  min-height: 0;
   display: grid;
-  gap: 16px;
-  min-width: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
 }
 
 .preview-header {
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 0 0 6px;
-}
-
-.preview-kicker {
-  margin: 0 0 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.68rem;
-  color: #7b7266;
-}
-
-.preview-title {
-  display: grid;
-  gap: 4px;
 }
 
 .preview-meta {
-  display: grid;
-  gap: 6px;
-  justify-items: end;
+  display: flex;
+  gap: 16px;
+  align-items: center;
   color: #645d52;
-  font-size: 0.9rem;
+  font-size: 0.86rem;
+  white-space: nowrap;
 }
 
 .workspace {
-  min-height: 72vh;
+  min-height: 0;
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -334,18 +428,22 @@ h1 {
 
 .canvas-frame {
   width: 100%;
-  min-height: 100%;
-  max-height: calc(100vh - 180px);
-  padding: 18px;
+  height: 100%;
+  padding: 14px;
   border: 1px solid rgba(31, 28, 23, 0.1);
   border-radius: 16px;
   background: #f7f3ed;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .preview-canvas {
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
   display: block;
   border-radius: 8px;
@@ -360,6 +458,7 @@ h1 {
 }
 
 .empty-state {
+  margin: auto;
   padding: 56px 32px;
   width: 100%;
   text-align: center;
@@ -368,83 +467,46 @@ h1 {
   background: #f7f3ed;
 }
 
-@media (max-width: 1100px) {
-  .topbar,
-  .workspace-grid {
-    grid-template-columns: 1fr;
+/* ------------------------------------------------------------------ *
+ * Narrow screens: drop the viewport lock and stack into a normal
+ * scrolling page (canvas first, controls below).
+ * ------------------------------------------------------------------ */
+@media (max-width: 1024px) {
+  html,
+  body {
+    height: auto;
   }
 
-  .workspace-grid {
-    gap: 24px;
+  body {
+    overflow: auto;
   }
 
-  .topbar-meta,
-  .preview-header {
-    align-items: start;
-    flex-direction: column;
-  }
-
-  .preview-meta {
-    justify-items: start;
-  }
-}
-
-@media (max-width: 900px) {
   .app-shell {
     width: min(100vw - 24px, 1480px);
-    margin: 12px auto 20px;
-    gap: 20px;
-  }
-
-  h1 {
-    font-size: clamp(1.7rem, 8vw, 2.4rem);
-    max-width: none;
+    height: auto;
+    min-height: 100dvh;
+    padding: 12px 0 24px;
+    grid-template-rows: none;
   }
 
   .topbar {
-    gap: 14px;
-    padding-bottom: 14px;
-  }
-
-  .topbar-copy,
-  .topbar-meta,
-  .meta-block,
-  .preview-meta {
-    width: 100%;
-  }
-
-  .topbar-meta {
+    flex-wrap: wrap;
     gap: 12px;
   }
 
-  .meta-block {
-    min-width: 0;
-  }
-
   .workspace-grid {
+    grid-template-columns: 1fr;
     gap: 18px;
   }
 
   .preview-column {
     order: -1;
+    grid-template-rows: none;
   }
 
-  .controls-shell {
+  .controls-column {
+    overflow: visible;
     padding-right: 0;
-  }
-
-  .panel {
-    gap: 14px;
-    padding: 16px 0 20px;
-  }
-
-  .preview-header {
-    gap: 10px;
-    padding-bottom: 0;
-  }
-
-  .preview-meta {
-    justify-items: start;
   }
 
   .workspace {
@@ -452,109 +514,41 @@ h1 {
   }
 
   .canvas-frame {
-    min-height: 0;
-    max-height: none;
-    padding: 12px;
+    height: auto;
+    max-height: 70vh;
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 560px) {
   .app-shell {
-    width: min(100vw - 20px, 1480px);
-    margin: 8px auto;
+    width: calc(100vw - 16px);
   }
 
-  .eyebrow,
-  .preview-kicker,
-  .meta-label,
-  .stat-label {
-    letter-spacing: 0.06em;
+  .topbar-meta {
+    gap: 16px;
   }
 
-  .section-step {
-    min-width: 28px;
-    height: 28px;
-    font-size: 0.7rem;
+  .meta-value {
+    max-width: 150px;
   }
 
   .stats {
     grid-template-columns: 1fr;
   }
 
-  .section-head {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .topbar-meta {
-    gap: 10px;
-  }
-
   .button-row {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 8px;
   }
 
   .button-row > button {
     width: 100%;
-    flex: initial;
-  }
-
-  .ghost-button,
-  .primary-button,
-  .secondary-button {
     min-height: 44px;
-    padding: 12px 14px;
   }
 
   .file-field input::file-selector-button {
     width: 100%;
     margin-right: 0;
     margin-bottom: 8px;
-  }
-
-  .control-grid {
-    gap: 12px;
-  }
-
-  .control-grid label {
-    gap: 6px;
-  }
-
-  .workspace {
-    min-height: auto;
-  }
-
-  .canvas-frame {
-    max-height: none;
-    padding: 10px;
-    border-radius: 12px;
-  }
-
-  .empty-state {
-    padding: 36px 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .app-shell {
-    width: calc(100vw - 16px);
-    gap: 16px;
-  }
-
-  .topbar {
-    padding-bottom: 12px;
-  }
-
-  .lede,
-  .hint,
-  .meta-value,
-  .stat-value {
-    font-size: 0.9rem;
-  }
-
-  .preview-canvas {
-    border-radius: 6px;
   }
 }

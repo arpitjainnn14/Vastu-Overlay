@@ -1,9 +1,14 @@
-import * as pdfjsLib from "pdfjs-dist";
-import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import type { FloorPlanAsset, MappingTemplate, Point } from "./types";
-import { DEFAULT_MAPPING_TEMPLATE } from "./defaultMapping";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+// pdfjs-dist is ~1.2 MB; load it only when a PDF is actually opened.
+const loadPdfjs = async () => {
+  const [pdfjsLib, workerModule] = await Promise.all([
+    import("pdfjs-dist"),
+    import("pdfjs-dist/build/pdf.worker.min.mjs?url"),
+  ]);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = workerModule.default;
+  return pdfjsLib;
+};
 
 const loadImage = async (src: string) =>
   new Promise<HTMLImageElement>((resolve, reject) => {
@@ -79,6 +84,7 @@ const detectPlanCenter = (
 
 export const fileToFloorPlan = async (file: File): Promise<FloorPlanAsset> => {
   if (file.type === "application/pdf") {
+    const pdfjsLib = await loadPdfjs();
     const bytes = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
     const page = await pdf.getPage(1);
