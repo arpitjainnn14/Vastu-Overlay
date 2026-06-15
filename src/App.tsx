@@ -377,6 +377,10 @@ function App() {
     context.drawImage(floorImage, 0, 0, canvas.width, canvas.height);
 
     context.save();
+    // Multiply so the scale's light/white background doesn't wash out the
+    // floor plan — near-white pixels leave the plan untouched while the
+    // darker linework still shows through.
+    context.globalCompositeOperation = "multiply";
     context.globalAlpha = project.transform.opacity;
     context.translate(project.transform.x, project.transform.y);
     context.rotate(project.transform.rotation);
