@@ -243,6 +243,34 @@ h1 {
   cursor: pointer;
 }
 
+.branding-fields {
+  display: grid;
+  gap: 12px;
+}
+
+.branding-fields label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2b2721;
+}
+
+.branding-fields input {
+  width: 100%;
+  border: 1px solid rgba(31, 28, 23, 0.16);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fffdf9;
+  color: #2b2721;
+  font-weight: 400;
+}
+
+.branding-fields input:focus {
+  outline: none;
+  border-color: #983000;
+}
+
 .ghost-button,
 .primary-button,
 .secondary-button {
