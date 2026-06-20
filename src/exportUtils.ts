@@ -178,5 +178,5 @@ export const exportCanvasAsPdf = async (
   });
 
   const bytes = await doc.save();
-  downloadBlob(new Blob([bytes], { type: "application/pdf" }), fileName);
+  downloadBlob(new Blob([bytes as BlobPart], { type: "application/pdf" }), fileName);
 };

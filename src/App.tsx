@@ -3,13 +3,17 @@ import { applyTransform, computeTransformFromAnchors, getImageCenter, normalizeT
 import { DEFAULT_MAPPING_TEMPLATE } from "./defaultMapping";
 import { fileToFloorPlan, fileToMappingTemplate } from "./fileUtils";
 import { exportCanvasAsJpeg, exportCanvasAsPdf } from "./exportUtils";
+import type { BrandingInfo } from "./exportUtils";
+import { formatReportDate } from "./exportLayout";
 import {
   clearDefaultMapping,
   createInitialState,
   loadDefaultMapping,
   loadProject,
+  loadStudioName,
   saveDefaultMapping,
   saveProject,
+  saveStudioName,
 } from "./storage";
 import type { LabelDefinition, OverlayTransform, Point, ProjectState } from "./types";
 
@@ -77,6 +81,11 @@ function App() {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [snapRotation, setSnapRotation] = useState(false);
+  const [studioName, setStudioName] = useState<string>(() => loadStudioName());
+  const [clientName, setClientName] = useState<string>("");
+  const [reportDate, setReportDate] = useState<string>(() =>
+    formatReportDate(new Date()),
+  );
   const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const floorPlanInputRef = useRef<HTMLInputElement | null>(null);
   const mappingInputRef = useRef<HTMLInputElement | null>(null);
@@ -710,12 +719,18 @@ function App() {
       return;
     }
 
+    const branding: BrandingInfo = { studioName, clientName, reportDate };
+    const slug = clientName.trim()
+      ? clientName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+      : "";
+    const base = slug ? `vastu-overlay-${slug}` : "vastu-overlay";
+
     try {
       setBusyMessage(`Exporting ${type.toUpperCase()}...`);
       if (type === "jpeg") {
-        await exportCanvasAsJpeg(canvas, "vastu-overlay.jpeg");
+        await exportCanvasAsJpeg(canvas, `${base}.jpeg`, branding);
       } else {
-        await exportCanvasAsPdf(canvas, "vastu-overlay.pdf");
+        await exportCanvasAsPdf(canvas, `${base}.pdf`, branding);
       }
     } catch (exportError) {
       setError(exportError instanceof Error ? exportError.message : "Export failed.");
@@ -1014,6 +1029,36 @@ function App() {
               </button>
               {activeStep === 3 ? (
                 <div className="step-body">
+                  <div className="branding-fields">
+                    <label>
+                      Studio name
+                      <input
+                        type="text"
+                        value={studioName}
+                        onChange={(event) => {
+                          setStudioName(event.target.value);
+                          saveStudioName(event.target.value);
+                        }}
+                      />
+                    </label>
+                    <label>
+                      Client name
+                      <input
+                        type="text"
+                        value={clientName}
+                        placeholder="e.g. Mr. Sharma"
+                        onChange={(event) => setClientName(event.target.value)}
+                      />
+                    </label>
+                    <label>
+                      Date
+                      <input
+                        type="text"
+                        value={reportDate}
+                        onChange={(event) => setReportDate(event.target.value)}
+                      />
+                    </label>
+                  </div>
                   <div className="button-row">
                     <button
                       className="primary-button"
