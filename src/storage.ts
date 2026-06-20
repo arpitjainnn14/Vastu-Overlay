@@ -3,6 +3,19 @@ import type { MappingTemplate, ProjectState } from "./types";
 
 const STORAGE_KEY = "vastu-overlay-project";
 const DEFAULT_MAPPING_KEY = "vastu-overlay-default-mapping";
+const STUDIO_NAME_KEY = "vastu-overlay-studio-name";
+const DEFAULT_STUDIO_NAME = "Dishā Vastu Studio";
+
+export const loadStudioName = (): string => {
+  if (typeof window === "undefined") {
+    return DEFAULT_STUDIO_NAME;
+  }
+  return window.localStorage.getItem(STUDIO_NAME_KEY) ?? DEFAULT_STUDIO_NAME;
+};
+
+export const saveStudioName = (name: string): void => {
+  window.localStorage.setItem(STUDIO_NAME_KEY, name);
+};
 
 const loadStoredDefaultMapping = (): MappingTemplate | null => {
   if (typeof window === "undefined") {
