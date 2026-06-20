@@ -4,7 +4,7 @@ import type { MappingTemplate, ProjectState } from "./types";
 const STORAGE_KEY = "vastu-overlay-project";
 const DEFAULT_MAPPING_KEY = "vastu-overlay-default-mapping";
 const STUDIO_NAME_KEY = "vastu-overlay-studio-name";
-const DEFAULT_STUDIO_NAME = "Dishā Vastu Studio";
+const DEFAULT_STUDIO_NAME = "Anjali Vastu Studio";
 
 export const loadStudioName = (): string => {
   if (typeof window === "undefined") {
